@@ -1,0 +1,30 @@
+### GET - Entities
+
+GET http://localhost:4004/odata/v4/purchase-order
+
+
+### GET - Purchase Orders
+
+GET http://localhost:4004/odata/v4/purchase-order/PurchaseOrder
+
+### GET - Purchase Order Items
+
+GET http://localhost:4004/odata/v4/purchase-order/PurchaseOrderItem
+
+
+### CREATE - Purchase Orders
+POST http://localhost:4004/odata/v4/purchase-order/PurchaseOrder
+Content-Type: application/json
+Accept: application/json
+
+{
+    "PurchaseOrder": "4500000003",
+    "CompanyCode": "1010",
+    "PurchasingOrganization": "1010",
+    "PurchasingGroup": "001",
+    "PurchaseOrderType": "NB",
+    "Supplier": "100100",
+    "PurchaseOrderDate": "2025-11-03",
+    "DocumentCurrency_code": "USD",
+    "Language_code": "ES"
+}

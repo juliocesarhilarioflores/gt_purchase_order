@@ -1,0 +1,9 @@
+ID,PurchaseOrderItem,PurchaseOrderItemText,Plant,StorageLocation,Material,MaterialGroup,ProductType,OrderQuantity,OrderPriceUnit,NetPriceAmount,DocumentCurrency,NetPriceQuantity,PurchaseOrderQuantityUnit,TaxCode,PurchasingInfoRecord,PurchaseOrder_ID,PurchaseOrder_PurchaseOrder
+a1b2c3d4-e5f6-4a7b-8c9d-1e2f3a4b5c6d,00010,Laptop Pro 15",1000,0001,MAT-LAP-001,L001,10,10,PCE,1200.00,USD,1,PCE,V1,5300000001,e1b7a942-8a1c-4b5c-9c9a-2a1f8a7b6c5d,4500000001
+b2c3d4e5-f6a7-4b8c-9d1e-2f3a4b5c6d7e,00020,Docking Station USB-C,1000,0001,MAT-ACC-005,L002,10,10,PCE,150.00,USD,1,PCE,V1,5300000002,e1b7a942-8a1c-4b5c-9c9a-2a1f8a7b6c5d,4500000001
+c3d4e5f6-a7b8-4c9d-1e2f-3a4b5c6d7e8f,00030,Wireless Mouse,1000,0002,MAT-ACC-002,L002,10,20,PCE,25.50,USD,1,PCE,V1,5300000003,e1b7a942-8a1c-4b5c-9c9a-2a1f8a7b6c5d,4500000001
+d4e5f6a7-b8c9-4d1e-2f3a-4b5c6d7e8f9a,00040,Consulting Services - Config,1000,,S-001,S001,02,40,HUR,100.00,USD,1,HUR,V0,5300000004,e1b7a942-8a1c-4b5c-9c9a-2a1f8a7b6c5d,4500000001
+e5f6a7b8-c9d1-4e2f-3a4b-5c6d7e8f9a1b,00010,Raw Material Steel-A,2000,RAWM,RAW-STEEL-A,R001,10,5000,KG,2.50,EUR,1,KG,V2,5300000010,f3c9e8a7-6b5d-4c3a-b8a9-1c8e7b6a5d4e,4500000002
+f6a7b8c9-d1e2-4f3a-4b5c-6d7e8f9a1b2c,00020,Raw Material Steel-B,2000,RAWM,RAW-STEEL-B,R001,10,2000,KG,3.10,EUR,1,KG,V2,5300000011,f3c9e8a7-6b5d-4c3a-b8a9-1c8e7b6a5d4e,4500000002
+a7b8c9d1-e2f3-4a4b-5c6d-7e8f9a1b2c3d,00030,Safety Gloves,2000,SPAR,CONS-GLV-01,C001,10,200,BOX,50.00,EUR,1,BOX,V2,5300000012,f3c9e8a7-6b5d-4c3a-b8a9-1c8e7b6a5d4e,4500000002
+b8c9d1e2-f3a4-4b5c-6d7e-8f9a1b2c3d4e,00040,Maintenance Service,2000,,S-002,S002,02,1,AU,5000.00,EUR,1,AU,V0,5300000013,f3c9e8a7-6b5d-4c3a-b8a9-1c8e7b6a5d4e,4500000002

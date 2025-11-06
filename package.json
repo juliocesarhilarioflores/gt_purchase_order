@@ -1,0 +1,16 @@
+{
+  "name": "gt_purchaseorders",
+  "version": "1.0.0",
+  "description": "Purchase Orders - Cloud Application Programming Model",
+  "dependencies": {
+    "@sap/cds": "^9.4.4",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^2.0.4"
+  },
+  "scripts": {
+    "start": "cds-serve"
+  },
+  "private": true
+}
