@@ -19,21 +19,22 @@
    "@sap.updatable": "false",
    "@sap.deletable": "false",
    "@sap.content.version": "1",
+   "@sap.label": "Purchase Order Type - Consumption",
    "elements": {
     "DocumentType": {
      "key": true,
      "type": "cds.String",
      "length": 4,
      "@sap.display.format": "UpperCase",
-     "@sap.label": "Cl.documento compras",
-     "@sap.quickinfo": "Clase de documento de compras",
+     "@sap.label": "Purchasing Doc. Type",
+     "@sap.quickinfo": "Purchasing Document Type",
      "notNull": true
     },
     "Description": {
      "type": "cds.String",
      "length": 20,
-     "@sap.label": "Denom.cl.documento",
-     "@sap.quickinfo": "Denominación de la clase de documento de compras"
+     "@sap.label": "Doc. Type Descript.",
+     "@sap.quickinfo": "Short Description of Purchasing Document Type"
     }
    }
   }

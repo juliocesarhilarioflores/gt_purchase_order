@@ -11,5 +11,13 @@
         "*.rule": "default",
         "*.properties": "default",
         "*.fragment": "default"
-    }
+    },
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "purchaseorder",
+            "database": "${workspaceFolder:gt_purchase_order_2da}/purchaseorder.sqlite"
+        }
+    ]
 }

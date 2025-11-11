@@ -22,7 +22,7 @@
         "kind": "odata-v2",
         "model": "srv/external/API_COMPANYCODE_SRV",
         "credentials": {
-          "url": "https://sandbox.api.sap.com/s4hanacloud/sap/opu/odata/sap/API_COMPANYCODE_SRV"
+          "url": "http://s4h22.sap4practice.com:8007/sap/opu/odata/sap/API_COMPANYCODE_SRV"
         }
       },
       "CE_PURCHASINGORGANIZATION_0001": {
@@ -43,7 +43,14 @@
         "kind": "odata-v2",
         "model": "srv/external/ZPURCHASEORDERTYPE_READ",
         "credentials": {
-          "url":"http://s4h22.sap4practice.com:8007/sap/opu/odata/sap/ZPURCHASEORDERTYPE_READ"
+          "url": "http://s4h22.sap4practice.com:8007/sap/opu/odata/sap/ZPURCHASEORDERTYPE_READ"
+        }
+      },
+      "API_BUSINESS_PARTNER": {
+        "kind": "odata-v2",
+        "model": "srv/external/API_BUSINESS_PARTNER",
+        "credentials": {
+          "url":"https://sandbox.api.sap.com/s4hanacloud/sap/opu/odata/sap/API_BUSINESS_PARTNER"
         }
       }
     }

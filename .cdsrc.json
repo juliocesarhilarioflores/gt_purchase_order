@@ -1,0 +1,32 @@
+{
+    "requires": {
+        "[dev]": {
+            "db": {
+                "kind":"sqlite",
+                "credentials": {
+                    "url":"purchaseorder.sqlite"
+                }
+            },
+            "auth":"mocked"
+        },
+        "[qa]": {
+            "db": {
+                "kind":"postgres",
+                "credentials": {
+                    "port":"",
+                    "host":"",
+                    "database":"",
+                    "user":"",
+                    "password":""
+                }
+            },
+            "auth":"mocked"
+        },
+        "[prd]": {
+            "db": {
+                "kind":"hana",
+                "auth":"xsuaa"
+            }
+        }
+    }
+}

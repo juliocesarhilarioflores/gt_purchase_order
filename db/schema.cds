@@ -16,6 +16,7 @@ using {API_COMPANYCODE_SRV as Company} from '../srv/external/API_COMPANYCODE_SRV
 using {CE_PURCHASINGORGANIZATION_0001 as PurchasingOrg} from '../srv/external/CE_PURCHASINGORGANIZATION_0001';
 using {CE_PURCHASINGGROUP_0001 as Group} from '../srv/external/CE_PURCHASINGGROUP_0001';
 using {ZPURCHASEORDERTYPE_READ as PurchaseOrderType} from '../srv/external/ZPURCHASEORDERTYPE_READ';
+using {API_BUSINESS_PARTNER as BusinessPartner } from '../srv/external/API_BUSINESS_PARTNER';
 
 entity PurchaseOrderHeader : cuid, managed {
     key PurchaseOrder              : String(10) not null;
@@ -26,8 +27,8 @@ entity PurchaseOrderHeader : cuid, managed {
         PurchasingGroup            : Association to Group.A_PurchasingGroup; //PurchasingGroup_PurchasingGroup
         PurchasingGroupName        : String(18);
         PurchaseOrderType          : Association to PurchaseOrderType.PurchaseOrderType;    //PurchaseOrderType_DocumentType
-        PurchaseOrderTypeName      : String(10);
-        Supplier                   : String(10) not null;
+        PurchaseOrderTypeName      : String(20);
+        Supplier                   : Association to BusinessPartner.A_Supplier; //Supplier_Supplier
         PurchaseOrderDate          : Date not null;
         DocumentCurrency           : Association to Currencies; //DocumentCurrency_code (ValueHelp - MatchCode)
         Language                   : Association to Languages; //Language_code (ValueHelp - MatchCode)

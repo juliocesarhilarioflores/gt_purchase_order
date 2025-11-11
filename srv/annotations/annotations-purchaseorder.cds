@@ -100,6 +100,24 @@ annotate service.PurchaseOrder with {
                 }
             ]
         },
+    };
+    Supplier @Common: {
+        ValueList : {
+            $Type : 'Common.ValueListType',
+            CollectionPath : 'VH_Supplier',
+            Parameters : [
+                {
+                    $Type : 'Common.ValueListParameterIn',
+                    LocalDataProperty : PurchasingOrganization_PurchasingOrganization,
+                    ValueListProperty : 'PurchasingOrganization'
+                },
+                {
+                    $Type : 'Common.ValueListParameterOut',
+                    LocalDataProperty : Supplier_Supplier,
+                    ValueListProperty : 'Supplier'
+                }
+            ]
+        }
     }
 };
 
@@ -109,7 +127,7 @@ annotate service.PurchaseOrder with @(
         PurchaseOrder,
         CompanyCode_CompanyCode,
         PurchasingOrganization_PurchasingOrganization,
-        Supplier,
+        Supplier_Supplier,
         PurchasingGroup_PurchasingGroup,
         PurchaseOrderType_DocumentType,
         Language_code,
@@ -160,7 +178,7 @@ annotate service.PurchaseOrder with @(
         },
         {
             $Type: 'UI.DataField',
-            Value: Supplier
+            Value: Supplier_Supplier
         },
         {
             $Type             : 'UI.DataField',
@@ -206,7 +224,7 @@ annotate service.PurchaseOrder with @(
             },
             {
                 $Type: 'UI.DataField',
-                Value: Supplier
+                Value: Supplier_Supplier
             },
             {
                 $Type: 'UI.DataField',

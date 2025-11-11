@@ -1,3 +1,3 @@
-ID,PurchaseOrder,CompanyCode_CompanyCode,CompanyCodeName,PurchasingOrganization_PurchasingOrganization,PurchasingOrganizationName,PurchasingGroup_PurchasingGroup,PurchasingGroupName,PurchaseOrderType_DocumentType,PurchaseOrderTypeName,Supplier,PurchaseOrderDate,DocumentCurrency_code,Language_code,PurchaseOrderStatus_code
-e1b7a942-8a1c-4b5c-9c9a-2a1f8a7b6c5d,4500000001,1010,BestRun DE,1010,Purch. Org. 1010,001,Group 001,NB,Pedido estándar,100100,2025-11-03,USD,ES,E
-f3c9e8a7-6b5d-4c3a-b8a9-1c8e7b6a5d4e,4500000002,1110,BestRun US,1110,Purch. Org. 1110,002,Group 002,MK,Ped.abierto ctd.,100200,2025-11-02,EUR,EN,E
+ID,PurchaseOrder,CompanyCode_CompanyCode,CompanyCodeName,PurchasingOrganization_PurchasingOrganization,PurchasingOrganizationName,PurchasingGroup_PurchasingGroup,PurchasingGroupName,PurchaseOrderType_DocumentType,PurchaseOrderTypeName,Supplier_Supplier,PurchaseOrderDate,DocumentCurrency_code,Language_code,PurchaseOrderStatus_code
+e1b7a942-8a1c-4b5c-9c9a-2a1f8a7b6c5d,4500000001,1010,BestRun DE,1010,Purch. Org. 1010,001,Group 001,LB,Pedido estándar,1000030,2025-11-03,USD,ES,E
+f3c9e8a7-6b5d-4c3a-b8a9-1c8e7b6a5d4e,4500000002,1110,BestRun US,1110,Purch. Org. 1110,002,Group 002,LB,Ped.abierto ctd.,1000030,2025-11-02,EUR,EN,E
