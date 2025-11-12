@@ -42,8 +42,12 @@ annotate service.PurchaseOrderItem with @(
             },
         },
         {
-            $Type: 'UI.DataField',
-            Value: Plant
+            $Type             : 'UI.DataField',
+            Value             : Plant,
+            @HTML5.CssDefaults: {
+                $Type: 'HTML5.CssDefaultsType',
+                width: '6rem'
+            },
         },
         {
             $Type             : 'UI.DataField',
@@ -83,11 +87,77 @@ annotate service.PurchaseOrderItem with @(
             }
         ]
     },
-    UI.Facets                       : [
-        {
-            $Type : 'UI.ReferenceFacet',
-            Target: '@UI.FieldGroup#PurchaseOrderItem',
-            Label : 'Purchase Order Item Information'
-        }
-    ]
+    UI.FieldGroup #DeliveryDate     : {
+        $Type: 'UI.FieldGroupType',
+        Data : [
+            {
+                $Type: 'UI.DataField',
+                Value: Plant
+            },
+            {
+                $Type: 'UI.DataField',
+                Value: StorageLocation
+            }
+        ]
+    },
+    UI.FieldGroup #MaterialDetails  : {
+        $Type: 'UI.FieldGroupType',
+        Data : [
+            {
+                $Type: 'UI.DataField',
+                Value: Material
+            },
+            {
+                $Type: 'UI.DataField',
+                Value: MaterialGroup
+            },
+            {
+                $Type: 'UI.DataField',
+                Value: ProductType
+            }
+        ]
+    },
+    UI.FieldGroup #QuantiyandPrice  : {
+        $Type: 'UI.FieldGroupType',
+        Data : [
+            {
+                $Type: 'UI.DataField',
+                Value: OrderQuantity
+            },
+            {
+                $Type: 'UI.DataField',
+                Value: NetPriceAmount
+            },
+            {
+                $Type: 'UI.DataField',
+                Value: NetPriceQuantity
+            }
+        ]
+    },
+    UI.Facets                       : [{
+        $Type : 'UI.CollectionFacet',
+        Facets: [
+            {
+                $Type : 'UI.ReferenceFacet',
+                Target: '@UI.FieldGroup#PurchaseOrderItem',
+                Label : 'Purchase Order Item Information'
+            },
+            {
+                $Type : 'UI.ReferenceFacet',
+                Target: '@UI.FieldGroup#DeliveryDate',
+                Label : 'Delivery Date'
+            },
+            {
+                $Type : 'UI.ReferenceFacet',
+                Target: '@UI.FieldGroup#MaterialDetails',
+                Label : 'Material Details'
+            },
+            {
+                $Type : 'UI.ReferenceFacet',
+                Target: '@UI.FieldGroup#QuantiyandPrice',
+                Label : 'Quantity and Price'
+            }
+        ],
+        Label : 'General Information'
+    }]
 );

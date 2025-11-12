@@ -1,10 +1,14 @@
 const cds = require('@sap/cds');
+const { SELECT } = require('@sap/cds/lib/ql/cds-ql');
+const moment = require('moment');
 
 module.exports = class PurchaseOrder extends cds.ApplicationService {
 
     async init () {
 
         const {
+            PurchaseOrder,
+            PurchaseOrderItem,
             VH_Company,
             VH_PurchasingOrg,
             VH_PurchasingGroup,
@@ -17,6 +21,51 @@ module.exports = class PurchaseOrder extends cds.ApplicationService {
         const api_purchasinggroup = await cds.connect.to("CE_PURCHASINGGROUP_0001");
         const api_purchaseordertype = await cds.connect.to("ZPURCHASEORDERTYPE_READ");
         const api_supplier = await cds.connect.to("API_BUSINESS_PARTNER");
+
+        /**
+         * Custom Logic
+         */
+
+        //CREATE (NEW), UPDATE, DELETE, READ
+        //before,on,after
+
+        this.before('NEW', PurchaseOrder.drafts, async (req) => {
+            const pop = await SELECT.one.from(PurchaseOrder).columns('max(PurchaseOrder)');
+            const pod = await SELECT.one.from(PurchaseOrder.drafts).columns('max(PurchaseOrder)');
+
+            let ipop = parseInt(pop.max);
+            let ipod = parseInt(pod.max);
+            let iNewMax = 0;
+
+            if (isNaN(ipod)) {
+                iNewMax = ipop + 1;
+            } else if (ipod > ipop) {
+                iNewMax = ipod + 1;
+            } else {
+                iNewMax = ipop + 1;
+            }
+
+            req.data.PurchaseOrder = String(iNewMax);
+
+            //Field - Date
+            req.data.PurchaseOrderDate = moment().format("YYYY-MM-DD");
+        });
+
+        this.before('NEW', PurchaseOrderItem.drafts, async (req) => {
+            console.log(req.data);
+            let parentId = req.data.PurchaseOrder_ID;
+
+            let {max} = await SELECT.one.from(PurchaseOrderItem.drafts).
+                                columns('max(PurchaseOrderItem)')
+                                .where({PurchaseOrder_ID: parentId});
+            const newItem = (parseInt(max?? 0)) + 10;   //10 --> 00010
+
+            req.data.PurchaseOrderItem = String(newItem).padStart(5,'0');
+        });
+
+        /**
+         * Value Helps
+         */
 
         this.on('READ', VH_Company, async (req) => {
             return await api_company.tx(req).send({

@@ -1,5 +1,5 @@
-code;name;descr
-E;En espera;
-P;Pendiente;
-A;Aprobado;
-R;Rechazado;
+code;name;descr;criticality
+E;En espera;;5
+P;Pendiente;;2
+A;Aprobado;;3
+R;Rechazado;;1

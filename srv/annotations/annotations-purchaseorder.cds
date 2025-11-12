@@ -14,14 +14,18 @@ annotate service.PurchaseOrder with {
     Supplier               @title: 'Supplier';
     Language               @title: 'Language';
     DocumentCurrency       @title: 'Currency';
-    PurchaseOrderStatus    @title: 'Purchase Order Status';
+    PurchaseOrderStatus    @title: 'Purchase Order Status';// @Common.FieldControl : #ReadOnly;
 };
 
 annotate service.PurchaseOrder with {
-    CompanyCode @Common: {
-        Text     : CompanyCodeName,
-        TextArrangement : #TextOnly,
-        ValueList: {
+    PurchaseOrderStatus    @Common: {
+        Text           : PurchaseOrderStatus.name,
+        TextArrangement: #TextOnly
+    };
+    CompanyCode            @Common: {
+        Text           : CompanyCodeName,
+        TextArrangement: #TextOnly,
+        ValueList      : {
             $Type         : 'Common.ValueListType',
             CollectionPath: 'VH_Company',
             Parameters    : [
@@ -31,94 +35,90 @@ annotate service.PurchaseOrder with {
                     ValueListProperty: 'CompanyCode'
                 },
                 {
-                    $Type : 'Common.ValueListParameterOut',
-                    LocalDataProperty : CompanyCodeName,
-                    ValueListProperty : 'CompanyCodeName'
+                    $Type            : 'Common.ValueListParameterOut',
+                    LocalDataProperty: CompanyCodeName,
+                    ValueListProperty: 'CompanyCodeName'
                 }
             ]
         }
     };
     PurchasingOrganization @Common: {
-        Text : PurchasingOrganizationName,
-        TextArrangement : #TextFirst,
-        ValueList : {
-            $Type : 'Common.ValueListType',
-            CollectionPath : 'VH_PurchasingOrg',
-            Parameters : [
+        Text           : PurchasingOrganizationName,
+        TextArrangement: #TextFirst,
+        ValueList      : {
+            $Type         : 'Common.ValueListType',
+            CollectionPath: 'VH_PurchasingOrg',
+            Parameters    : [
                 {
-                    $Type : 'Common.ValueListParameterIn',
-                    LocalDataProperty : CompanyCode_CompanyCode,
-                    ValueListProperty : 'CompanyCode',
+                    $Type            : 'Common.ValueListParameterIn',
+                    LocalDataProperty: CompanyCode_CompanyCode,
+                    ValueListProperty: 'CompanyCode',
                 },
                 {
-                    $Type : 'Common.ValueListParameterOut',
-                    LocalDataProperty : PurchasingOrganization_PurchasingOrganization,
-                    ValueListProperty : 'PurchasingOrganization'
+                    $Type            : 'Common.ValueListParameterOut',
+                    LocalDataProperty: PurchasingOrganization_PurchasingOrganization,
+                    ValueListProperty: 'PurchasingOrganization'
                 },
                 {
-                    $Type : 'Common.ValueListParameterOut',
-                    LocalDataProperty : PurchasingOrganizationName,
-                    ValueListProperty : 'PurchasingOrganizationName'
+                    $Type            : 'Common.ValueListParameterOut',
+                    LocalDataProperty: PurchasingOrganizationName,
+                    ValueListProperty: 'PurchasingOrganizationName'
                 }
             ]
         }
     };
-    PurchasingGroup @Common: {
-        Text : PurchasingGroupName,
-        TextArrangement : #TextFirst,
-        ValueList : {
-            $Type : 'Common.ValueListType',
-            CollectionPath : 'VH_PurchasingGroup',
-            Parameters : [
+    PurchasingGroup        @Common: {
+        Text           : PurchasingGroupName,
+        TextArrangement: #TextFirst,
+        ValueList      : {
+            $Type         : 'Common.ValueListType',
+            CollectionPath: 'VH_PurchasingGroup',
+            Parameters    : [
                 {
-                    $Type : 'Common.ValueListParameterInOut',
-                    LocalDataProperty : PurchasingGroup_PurchasingGroup,
-                    ValueListProperty : 'PurchasingGroup'
+                    $Type            : 'Common.ValueListParameterInOut',
+                    LocalDataProperty: PurchasingGroup_PurchasingGroup,
+                    ValueListProperty: 'PurchasingGroup'
                 },
                 {
-                    $Type : 'Common.ValueListParameterOut',
-                    LocalDataProperty : PurchasingGroupName,
-                    ValueListProperty : 'PurchasingGroupName'
+                    $Type            : 'Common.ValueListParameterOut',
+                    LocalDataProperty: PurchasingGroupName,
+                    ValueListProperty: 'PurchasingGroupName'
                 }
             ]
         },
     };
-    PurchaseOrderType @Common: {
-        ValueList : {
-            $Type : 'Common.ValueListType',
-            CollectionPath : 'VH_PurchaseOrderType',
-            Parameters : [
-                {
-                    $Type : 'Common.ValueListParameterInOut',
-                    LocalDataProperty : PurchaseOrderType_DocumentType,
-                    ValueListProperty : 'DocumentType'
-                },
-                {
-                    $Type : 'Common.ValueListParameterOut',
-                    LocalDataProperty : PurchaseOrderTypeName,
-                    ValueListProperty : 'Description'
-                }
-            ]
-        },
-    };
-    Supplier @Common: {
-        ValueList : {
-            $Type : 'Common.ValueListType',
-            CollectionPath : 'VH_Supplier',
-            Parameters : [
-                {
-                    $Type : 'Common.ValueListParameterIn',
-                    LocalDataProperty : PurchasingOrganization_PurchasingOrganization,
-                    ValueListProperty : 'PurchasingOrganization'
-                },
-                {
-                    $Type : 'Common.ValueListParameterOut',
-                    LocalDataProperty : Supplier_Supplier,
-                    ValueListProperty : 'Supplier'
-                }
-            ]
-        }
-    }
+    PurchaseOrderType      @Common: {ValueList: {
+        $Type         : 'Common.ValueListType',
+        CollectionPath: 'VH_PurchaseOrderType',
+        Parameters    : [
+            {
+                $Type            : 'Common.ValueListParameterInOut',
+                LocalDataProperty: PurchaseOrderType_DocumentType,
+                ValueListProperty: 'DocumentType'
+            },
+            {
+                $Type            : 'Common.ValueListParameterOut',
+                LocalDataProperty: PurchaseOrderTypeName,
+                ValueListProperty: 'Description'
+            }
+        ]
+    }, };
+    Supplier               @Common: {ValueList: {
+        $Type         : 'Common.ValueListType',
+        CollectionPath: 'VH_Supplier',
+        Parameters    : [
+            {
+                $Type            : 'Common.ValueListParameterIn',
+                LocalDataProperty: PurchasingOrganization_PurchasingOrganization,
+                ValueListProperty: 'PurchasingOrganization'
+            },
+            {
+                $Type            : 'Common.ValueListParameterOut',
+                LocalDataProperty: Supplier_Supplier,
+                ValueListProperty: 'Supplier'
+            }
+        ]
+    }};
 };
 
 
@@ -191,6 +191,7 @@ annotate service.PurchaseOrder with @(
         {
             $Type             : 'UI.DataField',
             Value             : PurchaseOrderStatus_code,
+            Criticality : PurchaseOrderStatus.criticality,
             @HTML5.CssDefaults: {
                 $Type: 'HTML5.CssDefaultsType',
                 width: '10rem'
@@ -208,6 +209,26 @@ annotate service.PurchaseOrder with @(
                 $Type: 'UI.DataField',
                 Value: PurchaseOrderDate,
                 Label: 'Order Date'
+            },
+            {
+                $Type: 'UI.DataField',
+                Value: PurchaseOrderStatus_code,
+                @Common.FieldControl : {
+                    $edmJson : {
+                        $If: [
+                            {
+                                $Eq: [
+                                    {
+                                        $Path: 'IsActiveEntity'
+                                    },
+                                    false
+                                ]
+                            },
+                            1,
+                            3
+                        ]
+                    }
+                }
             }
         ]
     },
