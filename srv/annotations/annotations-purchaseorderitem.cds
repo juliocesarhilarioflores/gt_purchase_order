@@ -8,18 +8,18 @@ annotate service.PurchaseOrderItem with {
     Material                   @title: 'Material';
     MaterialGroup              @title: 'Material Group';
     ProductType                @title: 'Product Type';
-    OrderQuantity              @title: 'Order Quantity'                @Measures.Unit       : OrderPriceUnit;
+    OrderQuantity              @title: 'Order Quantity'                @Measures.Unit       : OrderPriceUnit_BaseUnit;
     OrderPriceUnit             @title: 'Order Price Unit'              @Common.IsUnit;
-    NetPriceAmount             @title: 'Net Price Amount'              @Measures.ISOCurrency: DocumentCurrency;
-    NetPriceQuantity           @title: 'Net Price Quantity'            @Measures.Unit       : PurchaseOrderQuantityUnit;
+    NetPriceAmount             @title: 'Net Price Amount'              @Measures.ISOCurrency: DocumentCurrency_code;
     DocumentCurrency           @title: 'Currency'                      @Common.IsCurrency;
+    NetPriceQuantity           @title: 'Net Price Quantity'            @Measures.Unit       : PurchaseOrderQuantityUnit_BaseUnit;
     PurchaseOrderQuantityUnit  @title: 'Purchase Order Quantity Unit'  @Common.IsUnit;
     TaxCode                    @title: 'Tax Code';
     PurchasingInfoRecord       @title: 'Purchasing Info Record';
 };
 
 annotate service.PurchaseOrderItem with {
-    Plant                     @Common: {ValueList: {
+    Plant                     @Common          : {ValueList: {
         $Type         : 'Common.ValueListType',
         CollectionPath: 'VH_Plant',
         Parameters    : [
@@ -44,7 +44,7 @@ annotate service.PurchaseOrderItem with {
         // }
         ]
     }};
-    StorageLocation           @Common: {ValueList: {
+    StorageLocation           @Common          : {ValueList: {
         $Type         : 'Common.ValueListType',
         CollectionPath: 'VH_StorageLocation',
         Parameters    : [
@@ -65,24 +65,77 @@ annotate service.PurchaseOrderItem with {
             }
         ]
     }};
-    OrderPriceUnit            @Common: {ValueList: {
+    OrderPriceUnit            @Common          : {ValueList: {
         $Type         : 'Common.ValueListType',
         CollectionPath: 'VH_UnitMeasure',
-        Parameters    : [{
-            $Type            : 'Common.ValueListParameterInOut',
-            LocalDataProperty: OrderPriceUnit_BaseUnit,
-            ValueListProperty: 'BaseUnit'
-        }]
+        Parameters    : [
+            {
+                $Type            : 'Common.ValueListParameterInOut',
+                LocalDataProperty: OrderPriceUnit_BaseUnit,
+                ValueListProperty: 'BaseUnit'
+            },
+            {
+                $Type            : 'Common.ValueListParameterDisplayOnly',
+                ValueListProperty: 'UnitName'
+            }
+        ]
     }};
-    PurchaseOrderQuantityUnit @Common: {ValueList: {
+    PurchaseOrderQuantityUnit @Common          : {ValueList: {
         $Type         : 'Common.ValueListType',
         CollectionPath: 'VH_UnitMeasure',
-        Parameters    : [{
-            $Type            : 'Common.ValueListParameterInOut',
-            LocalDataProperty: PurchaseOrderQuantityUnit_BaseUnit,
-            ValueListProperty: 'BaseUnit'
-        }]
-    }}
+        Parameters    : [
+            {
+                $Type            : 'Common.ValueListParameterInOut',
+                LocalDataProperty: PurchaseOrderQuantityUnit_BaseUnit,
+                ValueListProperty: 'BaseUnit'
+            },
+            {
+                $Type            : 'Common.ValueListParameterDisplayOnly',
+                ValueListProperty: 'UnitName'
+            }
+        ]
+    }};
+    Material                  @Common.ValueList: {
+        $Type         : 'Common.ValueListType',
+        CollectionPath: 'VH_Product',
+        Parameters    : [
+            {
+                $Type            : 'Common.ValueListParameterIn',
+                LocalDataProperty: Plant_Plant,
+                ValueListProperty: 'Plant'
+            },
+            {
+                $Type            : 'Common.ValueListParameterOut',
+                LocalDataProperty: Material_Product,
+                ValueListProperty: 'Product'
+            },
+            {
+                $Type            : 'Common.ValueListParameterOut',
+                LocalDataProperty: MaterialName,
+                ValueListProperty: 'ProductName'
+            },
+            {
+                $Type : 'Common.ValueListParameterOut',
+                LocalDataProperty : ProductType,
+                ValueListProperty : 'ProductType'
+            },
+            {
+                $Type : 'Common.ValueListParameterOut',
+                LocalDataProperty : MaterialGroup,
+                ValueListProperty : 'ProductGroup'
+            },
+            {
+                $Type : 'Common.ValueListParameterOut',
+                LocalDataProperty : OrderPriceUnit_BaseUnit,
+                ValueListProperty : 'BaseUnit'
+            },
+            {
+                $Type : 'Common.ValueListParameterOut',
+                LocalDataProperty : PurchaseOrderQuantityUnit_BaseUnit,
+                ValueListProperty : 'BaseUnit'
+            }
+        ]
+    }
 };
 
 
@@ -93,7 +146,7 @@ annotate service.PurchaseOrderItem with @(
         TypeNamePlural: 'Items',
         Title         : {
             $Type: 'UI.DataField',
-            Value: Material
+            Value: Material_Product
         },
         Description   : {
             $Type: 'UI.DataField',
@@ -127,7 +180,7 @@ annotate service.PurchaseOrderItem with @(
         },
         {
             $Type: 'UI.DataField',
-            Value: Material
+            Value: Material_Product
         },
         {
             $Type: 'UI.DataField',
@@ -173,7 +226,7 @@ annotate service.PurchaseOrderItem with @(
         Data : [
             {
                 $Type: 'UI.DataField',
-                Value: Material
+                Value: Material_Product
             },
             {
                 $Type: 'UI.DataField',
@@ -194,23 +247,11 @@ annotate service.PurchaseOrderItem with @(
             },
             {
                 $Type: 'UI.DataField',
-                Value: OrderPriceUnit_BaseUnit,
-            },
-            {
-                $Type: 'UI.DataField',
                 Value: NetPriceAmount
             },
             {
                 $Type: 'UI.DataField',
-                Value: DocumentCurrency_code,
-            },
-            {
-                $Type: 'UI.DataField',
                 Value: NetPriceQuantity
-            },
-            {
-                $Type: 'UI.DataField',
-                Value: PurchaseOrderQuantityUnit_BaseUnit,
             }
         ]
     },

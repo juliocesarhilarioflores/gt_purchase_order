@@ -19,6 +19,7 @@ using {ZPURCHASEORDERTYPE_READ as PurchaseOrderType} from '../srv/external/ZPURC
 using {API_BUSINESS_PARTNER as BusinessPartner} from '../srv/external/API_BUSINESS_PARTNER';
 using {API_PLANT_SRV as Plant} from '../srv/external/API_PLANT_SRV';
 using {API_STORAGELOCATION_SRV as StorageLocation} from '../srv/external/API_STORAGELOCATION_SRV';
+using {API_PRODUCT_SRV as Product} from '../srv/external/API_PRODUCT_SRV';
 
 entity PurchaseOrderHeader : cuid, managed {
     key PurchaseOrder              : String(10) @Core.Computed;
@@ -46,15 +47,16 @@ entity PurchaseOrderItem : cuid {
         PlantName                 : String(30);
         StorageLocation           : Association to StorageLocation.StorageLocation; //StorageLocation_StorageLocation
         StorageLocationName       : String(16);
-        Material                  : String(40);
+        Material                  : Association to Product.A_Product;   //Material (Nav) / Material_Product
+        MaterialName              : String(40);
         MaterialGroup             : String(9);
-        ProductType               : String(2);
+        ProductType               : String(4);
         OrderQuantity             : Decimal;
-        OrderPriceUnit            : Association to UnitMeasures; //OrderPriceUnit_BaseUnit KG PC
+        OrderPriceUnit            : Association to UnitMeasures default 'PC'; //OrderPriceUnit_BaseUnit KG PC
         NetPriceAmount            : Decimal;
-        DocumentCurrency          : Association to Currencies;
+        DocumentCurrency          : Association to Currencies default 'EUR';
         NetPriceQuantity          : Decimal;
-        PurchaseOrderQuantityUnit : Association to UnitMeasures;
+        PurchaseOrderQuantityUnit : Association to UnitMeasures default 'PC';
         TaxCode                   : String(2);
         PurchasingInfoRecord      : String(10);
         PurchaseOrder             : Association to PurchaseOrderHeader; //PurchaseOrder (NavTo) PurchaseOrder_ID && PurchaseOrder_PurchaseOrder

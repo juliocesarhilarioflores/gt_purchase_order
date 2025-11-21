@@ -11,6 +11,7 @@ using {ZPURCHASEORDERTYPE_READ as PurchaseOrderType} from './external/ZPURCHASEO
 using {API_BUSINESS_PARTNER as BusinessPartner} from './external/API_BUSINESS_PARTNER';
 using {API_PLANT_SRV as Plant} from './external/API_PLANT_SRV';
 using {API_STORAGELOCATION_SRV as StorageLocation} from './external/API_STORAGELOCATION_SRV';
+using {API_PRODUCT_SRV as Product} from './external/API_PRODUCT_SRV';
 
 service PurchaseOrder {
 
@@ -93,6 +94,19 @@ service PurchaseOrder {
             key StorageLocation,
                 StorageLocationName,
                 Plant
+        };
+
+    @readonly
+    @cds.persistence.exists
+    @cds.persistence.skip
+    entity VH_Product  as
+        projection on Product.A_Product {
+            key Product,
+                ProductType,
+                ProductGroup,
+                BaseUnit,
+                to_Description.ProductDescription as ProductName,
+                to_Plant.Plant as Plant
         };
 
 }

@@ -67,6 +67,13 @@
         "credentials": {
           "url": "http://s4h22.sap4practice.com:8007/sap/opu/odata/sap/API_STORAGELOCATION_SRV"
         }
+      },
+      "API_PRODUCT_SRV": {
+        "kind": "odata-v2",
+        "model": "srv/external/API_PRODUCT_SRV",
+        "credentials": {
+          "url": "http://s4h22.sap4practice.com:8007/sap/opu/odata/sap/API_PRODUCT_SRV"
+        }
       }
     }
   }

@@ -6,3 +6,5 @@ using from './annotations-suppliers';
 using from './annotations-status';
 using from './annotations-plant';
 using from './annotations-storagelocation';
+using from './annotations-unitsmeasures';
+using from './annotations-products';

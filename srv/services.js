@@ -15,7 +15,8 @@ module.exports = class PurchaseOrder extends cds.ApplicationService {
             VH_PurchaseOrderType,
             VH_Supplier,
             VH_Plant,
-            VH_StorageLocation
+            VH_StorageLocation,
+            VH_Product
         } = this.entities;
 
         const api_company = await cds.connect.to("API_COMPANYCODE_SRV");
@@ -25,6 +26,7 @@ module.exports = class PurchaseOrder extends cds.ApplicationService {
         const api_supplier = await cds.connect.to("API_BUSINESS_PARTNER");
         const api_plant = await cds.connect.to("API_PLANT_SRV");
         const api_storagelocation = await cds.connect.to("API_STORAGELOCATION_SRV");
+        const api_product = await cds.connect.to("API_PRODUCT_SRV");
 
         /**
          * Custom Logic
@@ -164,6 +166,72 @@ module.exports = class PurchaseOrder extends cds.ApplicationService {
                     Authorization: process.env.AUTHORIZATION
                 }
             })
+        });
+
+        this.on('READ', VH_Product, async (req) => {
+            const filter = req.query.SELECT.where;
+            let plant = '';
+
+            if (filter) {
+                plant = filter[2].val;
+            }
+
+            if (!plant) {
+                return [];
+            }
+
+            // Recuperar todos los códigos de los productos que estan relacionados con al centro (Plant). 
+            // En este ejemplo hacemos referencia al centro (Plant) 1010
+            const productQuery = SELECT.from("API_PRODUCT_SRV.A_ProductPlant")
+                                        .columns('Product')
+                                        .where({Plant: plant});
+
+            const products = await api_product.run(productQuery);
+            
+            if (products.length === 0) {
+                return [];
+            }
+
+            const ids = [...new Set(products.map(p => p.Product))];
+            //const ids = ['TG10','TG11','TG12'];
+            console.log(ids);
+
+            const chunkSize = 10;
+            const promises = [];
+
+            for (let i = 0; i < ids.length; i += chunkSize) {
+                const chunk = ids.slice(i, i + chunkSize);
+                const query = SELECT.from('API_PRODUCT_SRV.A_Product')
+                                    .columns(p => {
+                                        p.Product,
+                                        p.ProductGroup,
+                                        p.ProductType,
+                                        p.BaseUnit,
+                                        p.to_Description( d => {
+                                            d.ProductDescription
+                                        }).where({Language: req.user.locale?? 'EN'}),
+                                        p.to_ProductProcurement(pd => {
+                                            pd.PurchaseOrderQuantityUnit
+                                        })
+                                    }).where({Product: {in: chunk}});
+
+                promises.push(api_product.run(query));
+            }
+
+            const chunkResults = await Promise.all(promises);
+            const aProducts = chunkResults.flat();
+
+            console.log(aProducts);
+
+            return aProducts.map(item => ({
+                Product: item.Product,
+                ProductName: item.to_Description[0]?.ProductDescription || 'No Description',
+                ProductGroup: item.ProductGroup,
+                ProductType: item.ProductType,
+                BaseUnit: item.BaseUnit??item.to_ProductProcurement?.PurchaseOrderQuantityUnit,
+                Plant: plant
+            }))
+
         });
 
         return super.init();
