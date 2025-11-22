@@ -15,6 +15,7 @@ annotate service.PurchaseOrder with {
     Language               @title: 'Language';
     DocumentCurrency       @title: 'Currency';
     PurchaseOrderStatus    @title: 'Purchase Order Status';// @Common.FieldControl : #ReadOnly;
+    TotalAmount            @title: 'Total Amount';
 };
 
 annotate service.PurchaseOrder with {
@@ -196,7 +197,11 @@ annotate service.PurchaseOrder with @(
                 $Type: 'HTML5.CssDefaultsType',
                 width: '10rem'
             }
-        }
+        },
+        {
+            $Type : 'UI.DataField',
+            Value : TotalAmount
+        },
     ],
     UI.FieldGroup #PurchaseOrder: {
         $Type: 'UI.FieldGroupType',

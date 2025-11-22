@@ -36,6 +36,7 @@ entity PurchaseOrderHeader : cuid, managed {
         DocumentCurrency           : Association to Currencies default 'EUR'; //DocumentCurrency_code (ValueHelp - MatchCode)
         Language                   : Association to Languages default 'EN'; //Language_code (ValueHelp - MatchCode)
         PurchaseOrderStatus        : Association to Status default 'E'; //PurchaseOrderStatus_code
+        TotalAmount                : Decimal @Core.Computed default 0.00;
         to_PurchaseOrderItem       : Composition of many PurchaseOrderItem
                                          on to_PurchaseOrderItem.PurchaseOrder = $self;
 }

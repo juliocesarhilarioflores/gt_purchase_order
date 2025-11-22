@@ -115,31 +115,46 @@ annotate service.PurchaseOrderItem with {
                 ValueListProperty: 'ProductName'
             },
             {
-                $Type : 'Common.ValueListParameterOut',
-                LocalDataProperty : ProductType,
-                ValueListProperty : 'ProductType'
+                $Type            : 'Common.ValueListParameterOut',
+                LocalDataProperty: ProductType,
+                ValueListProperty: 'ProductType'
             },
             {
-                $Type : 'Common.ValueListParameterOut',
-                LocalDataProperty : MaterialGroup,
-                ValueListProperty : 'ProductGroup'
+                $Type            : 'Common.ValueListParameterOut',
+                LocalDataProperty: MaterialGroup,
+                ValueListProperty: 'ProductGroup'
             },
             {
-                $Type : 'Common.ValueListParameterOut',
-                LocalDataProperty : OrderPriceUnit_BaseUnit,
-                ValueListProperty : 'BaseUnit'
+                $Type            : 'Common.ValueListParameterOut',
+                LocalDataProperty: OrderPriceUnit_BaseUnit,
+                ValueListProperty: 'BaseUnit'
             },
-            {
-                $Type : 'Common.ValueListParameterOut',
-                LocalDataProperty : PurchaseOrderQuantityUnit_BaseUnit,
-                ValueListProperty : 'BaseUnit'
-            }
+            // {
+            //     $Type            : 'Common.ValueListParameterOut',
+            //     LocalDataProperty: PurchaseOrderQuantityUnit_BaseUnit,
+            //     ValueListProperty: 'BaseUnit'
+            // }
         ]
     }
 };
 
 
 annotate service.PurchaseOrderItem with @(
+    Common.SideEffects: {
+        $Type : 'Common.SideEffectsType',
+        SourceProperties : [
+            Material_Product
+        ],
+        TargetProperties : [
+            'OrderPriceUnit_BaseUnit',
+            'NetPriceAmount',
+            'DocumentCurrency_code',
+            'NetPriceQuantity',
+            'PurchaseOrderQuantityUnit_BaseUnit',
+            'TaxCode',
+            'PurchasingInfoRecord'
+        ],
+    },
     UI.HeaderInfo                   : {
         $Type         : 'UI.HeaderInfoType',
         TypeName      : 'Item',
@@ -188,11 +203,11 @@ annotate service.PurchaseOrderItem with @(
         },
         {
             $Type: 'UI.DataField',
-            Value: NetPriceAmount
+            Value: NetPriceQuantity
         },
         {
             $Type: 'UI.DataField',
-            Value: NetPriceQuantity
+            Value: NetPriceAmount
         }
     ],
     UI.FieldGroup #PurchaseOrderItem: {
@@ -235,7 +250,11 @@ annotate service.PurchaseOrderItem with @(
             {
                 $Type: 'UI.DataField',
                 Value: ProductType
-            }
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : TaxCode
+            },
         ]
     },
     UI.FieldGroup #QuantiyandPrice  : {

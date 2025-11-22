@@ -16,7 +16,8 @@ module.exports = class PurchaseOrder extends cds.ApplicationService {
             VH_Supplier,
             VH_Plant,
             VH_StorageLocation,
-            VH_Product
+            VH_Product,
+            VH_InfoRecord
         } = this.entities;
 
         const api_company = await cds.connect.to("API_COMPANYCODE_SRV");
@@ -27,6 +28,7 @@ module.exports = class PurchaseOrder extends cds.ApplicationService {
         const api_plant = await cds.connect.to("API_PLANT_SRV");
         const api_storagelocation = await cds.connect.to("API_STORAGELOCATION_SRV");
         const api_product = await cds.connect.to("API_PRODUCT_SRV");
+        const api_inforecord = await cds.connect.to("API_INFORECORD_PROCESS_SRV");
 
         /**
          * Custom Logic
@@ -58,7 +60,6 @@ module.exports = class PurchaseOrder extends cds.ApplicationService {
         });
 
         this.before('NEW', PurchaseOrderItem.drafts, async (req) => {
-            console.log(req.data);
             let parentId = req.data.PurchaseOrder_ID;
 
             let {max} = await SELECT.one.from(PurchaseOrderItem.drafts).
@@ -67,6 +68,93 @@ module.exports = class PurchaseOrder extends cds.ApplicationService {
             const newItem = (parseInt(max?? 0)) + 10;   //10 --> 00010
 
             req.data.PurchaseOrderItem = String(newItem).padStart(5,'0');
+        });
+
+        this.before('PATCH', PurchaseOrderItem.drafts, async (req) => {
+            
+
+            if (req.data.Material_Product && req.data.MaterialName) {
+
+                let parentId = req.data.PurchaseOrder_ID;
+                let itemId = req.data.ID;
+
+                const result = await SELECT.one.from(PurchaseOrderItem.drafts)
+                                .columns(i=> {
+                                    i.Material_Product,
+                                    i.Plant_Plant,
+                                    i.PurchaseOrder (p => {
+                                        p.Supplier_Supplier,
+                                        p.PurchasingOrganization_PurchasingOrganization
+                                    })
+                                })
+                                .where({ID: itemId, PurchaseOrder_ID: parentId});
+
+                let material = result.Material_Product;
+                let plant = result.Plant_Plant;
+                let supplier = result.PurchaseOrder.Supplier_Supplier;
+                let PurchasingOrg = result.PurchaseOrder.PurchasingOrganization_PurchasingOrganization;
+
+                if (!material || !plant || !supplier || !PurchasingOrg) {
+                    console.log("Algunos de los campos estan vacios");
+                    return;
+                }
+                
+                const query = SELECT.one.from("API_INFORECORD_PROCESS_SRV.A_PurgInfoRecdOrgPlantData")
+                                .columns(
+                                    'MinimumPurchaseOrderQuantity',
+                                    'MaximumOrderQuantity',
+                                    'NetPriceAmount',
+                                    'PurchaseOrderPriceUnit',
+                                    'MaterialPriceUnitQty',
+                                    'Currency',
+                                    'TaxCode',
+                                    'PurchasingInfoRecord'
+                                )
+                                .where({
+                                    PurchasingOrganization: PurchasingOrg,
+                                    Supplier: supplier,
+                                    Plant: plant,
+                                    Material: material
+                                });
+                
+                try {
+                    const infoRecord = await api_inforecord.run(query);
+                    console.log(infoRecord);
+
+                    if (infoRecord) {
+                        await UPDATE.entity(PurchaseOrderItem.drafts).set({
+                            NetPriceAmount: infoRecord.NetPriceAmount,
+                            DocumentCurrency_code: infoRecord.Currency,
+                            NetPriceQuantity: infoRecord.MaterialPriceUnitQty,
+                            PurchaseOrderQuantityUnit_BaseUnit: infoRecord.PurchaseOrderPriceUnit,
+                            OrderPriceUnit_BaseUnit: infoRecord.PurchaseOrderPriceUnit,
+                            TaxCode: infoRecord.TaxCode,
+                            PurchasingInfoRecord: infoRecord.PurchasingInfoRecord
+                        }).where({
+                            ID: itemId,
+                            PurchaseOrder_ID: parentId
+                        });
+                    } else {
+                        await UPDATE.entity(PurchaseOrderItem.drafts).set({
+                            NetPriceAmount: '',
+                            DocumentCurrency_code: '',
+                            NetPriceQuantity: '',
+                            PurchaseOrderQuantityUnit_BaseUnit: '',
+                            OrderPriceUnit_BaseUnit: '',
+                            TaxCode: '',
+                            PurchasingInfoRecord: ''
+                        }).where({
+                            ID: itemId,
+                            PurchaseOrder_ID: parentId
+                        });
+                    }
+
+                } catch (error) {  
+                    console.log("Ocurrió un error durante la consulta");
+                }
+
+            }
+
         });
 
         /**
@@ -221,8 +309,6 @@ module.exports = class PurchaseOrder extends cds.ApplicationService {
             const chunkResults = await Promise.all(promises);
             const aProducts = chunkResults.flat();
 
-            console.log(aProducts);
-
             return aProducts.map(item => ({
                 Product: item.Product,
                 ProductName: item.to_Description[0]?.ProductDescription || 'No Description',
@@ -232,6 +318,12 @@ module.exports = class PurchaseOrder extends cds.ApplicationService {
                 Plant: plant
             }))
 
+        });
+
+        this.on('READ', VH_InfoRecord, async (req) => {
+            return await api_inforecord.tx(req).send({
+                query: req.query
+            })
         });
 
         return super.init();
