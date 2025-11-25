@@ -1,5 +1,6 @@
 const cds = require('@sap/cds');
-const { SELECT } = require('@sap/cds/lib/ql/cds-ql');
+const { data } = require('@sap/cds/lib/dbs/cds-deploy');
+const { SELECT, UPDATE } = require('@sap/cds/lib/ql/cds-ql');
 const moment = require('moment');
 
 module.exports = class PurchaseOrder extends cds.ApplicationService {
@@ -36,6 +37,52 @@ module.exports = class PurchaseOrder extends cds.ApplicationService {
 
         //CREATE (NEW), UPDATE, DELETE, READ
         //before,on,after
+
+        this.on('submitOrder', async (req) => {
+            const parentId = req.params[0].ID;
+            const result = await SELECT.one.from(PurchaseOrder)
+                                .columns(po=> {
+                                    po`.*`,
+                                    po.to_PurchaseOrderItem(item => {
+                                        item`.*`
+                                    })
+                                }).where({ID: parentId});
+
+
+            let payload = {
+                "CompanyCode": result.CompanyCode_CompanyCode,
+                "PurchasingOrganization": result.PurchasingOrganization_PurchasingOrganization,
+                "PurchasingGroup": result.PurchasingGroup_PurchasingGroup,
+                "PurchaseOrderType": result.PurchaseOrderType_DocumentType,
+                "Supplier": result.Supplier_Supplier,
+                "PurchaseOrderDate": new Date(result.PurchaseOrderDate),
+                "DocumentCurrency": result.DocumentCurrency_code,
+                "to_PurchaseOrderItem": result.to_PurchaseOrderItem.map((item)=> ({
+                    "PurchaseOrderItem": item.PurchaseOrderItem,
+                    ...(item.PurchaseOrderItemText && {"PurchaseOrderItemText": item.PurchaseOrderItemText}),
+                    "Plant": item.Plant_Plant,
+                    ...(item.StorageLocation && {"StorageLocation": item.StorageLocation_Plant}),
+                    "Material": item.Material_Product,
+                    ...(item.MaterialGroup && {"MaterialGroup": item.MaterialGroup}),
+                    ...(item.ProductType && {"ProductType": item.ProductType}),
+                    "OrderQuantity": String(item.OrderQuantity),
+                    "PurchaseOrderQuantityUnit": item.PurchaseOrderQuantityUnit_BaseUnit,
+                    "NetPriceAmount": String(item.NetPriceAmount),
+                    "NetPriceQuantity": String(item.NetPriceQuantity),
+                    "OrderPriceUnit": item.OrderPriceUnit_BaseUnit,
+                    ...(item.TaxCode && {"TaxCode": item.TaxCode}),
+                    "to_ScheduleLine": [
+                        {
+                            "ScheduleLine": "1",
+                            "ScheduleLineDeliveryDate": new Date(result.PurchaseOrderDate),
+                            "ScheduleLineOrderQuantity": String(item.OrderQuantity)
+                        }
+                    ]
+                }))
+            };
+
+            console.log(payload);
+        });
 
         this.before('NEW', PurchaseOrder.drafts, async (req) => {
             const pop = await SELECT.one.from(PurchaseOrder).columns('max(PurchaseOrder)');
@@ -155,6 +202,64 @@ module.exports = class PurchaseOrder extends cds.ApplicationService {
 
             }
 
+            if ('OrderQuantity' in req.data || 'NetPriceAmount' in req.data || 'NetPriceQuantity' in req.data ) {
+                const id = req.data.ID;
+                const parentId = req.data.PurchaseOrder_ID;
+
+                const allItems = await SELECT.from(PurchaseOrderItem.drafts).where({ID: id});
+
+                const total = allItems.reduce((sum,item) => {
+                    const quantity = req.data.OrderQuantity?? item.OrderQuantity;
+                    const price = req.data.NetPriceAmount?? item.NetPriceAmount;
+                    return sum + (quantity * price);
+                },0);
+
+                await UPDATE.entity(PurchaseOrder.drafts).set({TotalAmount: total}).where({ID: parentId});
+            }
+
+        });
+
+        this.after('READ', PurchaseOrder, async (data, req) => {
+            const results = Array.isArray(data) ? data : [data];
+
+            if (results.length === 0 || !results[0]) {
+                return;
+            }
+
+            let totalAmountWasRequested = false;
+
+            if (req.query.SELECT.columns) {
+                totalAmountWasRequested = req.query.SELECT.columns.some( c=> {
+                    return c && c.ref && Array.isArray(c.ref) && c.ref.includes('TotalAmount');
+                });
+            }
+
+            if (!totalAmountWasRequested) {
+                return;
+            }
+
+            const itemEntity = req.target.isDraft? PurchaseOrderItem.drafts : PurchaseOrderItem;
+
+            await Promise.all(results.map(async (header) => {
+                if (!header) return;
+
+                let items = header.to_PurchaseOrderItem;
+
+                if (!items) {
+                    items = await SELECT.from(itemEntity).where({PurchaseOrder_ID: header.ID});
+                }
+
+                if (!items) return;
+
+                const total = items.reduce((sum,item) => {
+                    const quantity = item.OrderQuantity || 0;
+                    const price = item.NetPriceAmount || 0;
+                    return sum + (quantity * price);
+                },0);
+
+                header.TotalAmount = total;
+
+            }));
         });
 
         /**

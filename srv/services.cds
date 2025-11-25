@@ -16,7 +16,9 @@ using {API_INFORECORD_PROCESS_SRV as InfoRecord} from './external/API_INFORECORD
 
 service PurchaseOrder {
 
-    entity PurchaseOrder        as projection on entities.PurchaseOrderHeader;
+    entity PurchaseOrder        as projection on entities.PurchaseOrderHeader actions {
+        action submitOrder () returns PurchaseOrder;
+    };
     entity PurchaseOrderItem    as projection on entities.PurchaseOrderItem;
 
     /**

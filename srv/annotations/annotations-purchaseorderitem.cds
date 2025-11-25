@@ -129,23 +129,26 @@ annotate service.PurchaseOrderItem with {
                 LocalDataProperty: OrderPriceUnit_BaseUnit,
                 ValueListProperty: 'BaseUnit'
             },
-            // {
-            //     $Type            : 'Common.ValueListParameterOut',
-            //     LocalDataProperty: PurchaseOrderQuantityUnit_BaseUnit,
-            //     ValueListProperty: 'BaseUnit'
-            // }
+        // {
+        //     $Type            : 'Common.ValueListParameterOut',
+        //     LocalDataProperty: PurchaseOrderQuantityUnit_BaseUnit,
+        //     ValueListProperty: 'BaseUnit'
+        // }
         ]
     }
 };
 
 
 annotate service.PurchaseOrderItem with @(
-    Common.SideEffects: {
-        $Type : 'Common.SideEffectsType',
-        SourceProperties : [
-            Material_Product
+    Common.SideEffects              : {
+        $Type           : 'Common.SideEffectsType',
+        SourceProperties: [
+            Material_Product,
+            OrderQuantity,
+            NetPriceAmount,
+            NetPriceQuantity
         ],
-        TargetProperties : [
+        TargetProperties: [
             'OrderPriceUnit_BaseUnit',
             'NetPriceAmount',
             'DocumentCurrency_code',
@@ -154,6 +157,7 @@ annotate service.PurchaseOrderItem with @(
             'TaxCode',
             'PurchasingInfoRecord'
         ],
+        TargetEntities  : [PurchaseOrder]
     },
     UI.HeaderInfo                   : {
         $Type         : 'UI.HeaderInfoType',
@@ -165,7 +169,7 @@ annotate service.PurchaseOrderItem with @(
         },
         Description   : {
             $Type: 'UI.DataField',
-            Value: PurchaseOrder.PurchaseOrder
+            Value: PurchaseOrder.TotalAmount
         }
     },
     UI.LineItem                     : [
@@ -252,8 +256,8 @@ annotate service.PurchaseOrderItem with @(
                 Value: ProductType
             },
             {
-                $Type : 'UI.DataField',
-                Value : TaxCode
+                $Type: 'UI.DataField',
+                Value: TaxCode
             },
         ]
     },

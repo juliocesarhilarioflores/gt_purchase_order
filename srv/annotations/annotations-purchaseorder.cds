@@ -14,8 +14,8 @@ annotate service.PurchaseOrder with {
     Supplier               @title: 'Supplier';
     Language               @title: 'Language';
     DocumentCurrency       @title: 'Currency';
-    PurchaseOrderStatus    @title: 'Purchase Order Status';// @Common.FieldControl : #ReadOnly;
-    TotalAmount            @title: 'Total Amount';
+    PurchaseOrderStatus    @title: 'Purchase Order Status'; // @Common.FieldControl : #ReadOnly;
+    TotalAmount            @title: 'Total Amount'  @Measures.ISOCurrency: DocumentCurrency_code;
 };
 
 annotate service.PurchaseOrder with {
@@ -192,15 +192,21 @@ annotate service.PurchaseOrder with @(
         {
             $Type             : 'UI.DataField',
             Value             : PurchaseOrderStatus_code,
-            Criticality : PurchaseOrderStatus.criticality,
+            Criticality       : PurchaseOrderStatus.criticality,
             @HTML5.CssDefaults: {
                 $Type: 'HTML5.CssDefaultsType',
                 width: '10rem'
             }
         },
         {
-            $Type : 'UI.DataField',
-            Value : TotalAmount
+            $Type: 'UI.DataField',
+            Value: TotalAmount
+        },
+        {
+            $Type : 'UI.DataFieldForAction',
+            Action: 'PurchaseOrder.submitOrder',
+            Label : 'Purchase Order',
+            Inline: true
         },
     ],
     UI.FieldGroup #PurchaseOrder: {
@@ -216,24 +222,16 @@ annotate service.PurchaseOrder with @(
                 Label: 'Order Date'
             },
             {
-                $Type: 'UI.DataField',
-                Value: PurchaseOrderStatus_code,
-                @Common.FieldControl : {
-                    $edmJson : {
-                        $If: [
-                            {
-                                $Eq: [
-                                    {
-                                        $Path: 'IsActiveEntity'
-                                    },
-                                    false
-                                ]
-                            },
-                            1,
-                            3
-                        ]
-                    }
-                }
+                $Type               : 'UI.DataField',
+                Value               : PurchaseOrderStatus_code,
+                @Common.FieldControl: {$edmJson: {$If: [
+                    {$Eq: [
+                        {$Path: 'IsActiveEntity'},
+                        false
+                    ]},
+                    1,
+                    3
+                ]}}
             }
         ]
     },
@@ -275,6 +273,24 @@ annotate service.PurchaseOrder with @(
             }
         ]
     },
+    UI.DataPoint #TotalAmount   : {
+        $Type        : 'UI.DataPointType',
+        Value        : TotalAmount,
+        Visualization: #Number
+    },
+    UI.FieldGroup #TotalAmount  : {
+        $Type: 'UI.FieldGroupType',
+        Data : [{
+            $Type : 'UI.DataFieldForAnnotation',
+            Target: '@UI.DataPoint#TotalAmount',
+            Label : 'Total Amount'
+        }]
+    },
+    UI.HeaderFacets             : [{
+        $Type : 'UI.ReferenceFacet',
+        Target: '@UI.FieldGroup#TotalAmount',
+        Label : 'Total Amount'
+    }],
     UI.Facets                   : [
         {
             $Type : 'UI.CollectionFacet',
